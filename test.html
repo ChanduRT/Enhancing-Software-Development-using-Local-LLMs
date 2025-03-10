@@ -1,0 +1,70 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <title>Document</title>
+
+    <script>
+        var converter = new showdown.Converter(),
+            text      = `
+# hello, markdown!
+
+- list1
+- list2
+- list3
+            `,
+            html      = converter.makeHtml(text);
+
+        // Insert the HTML content into the body of the page
+        document.addEventListener("DOMContentLoaded", function() {
+            // Create a container to hold the generated HTML
+            var outputDiv = document.createElement('div');
+            outputDiv.innerHTML = html; // Insert the generated HTML
+            document.body.appendChild(outputDiv); // Append it to the body
+        });
+    </script>
+</head>
+<body>
+    
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Report PDF</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <button id="generateReport">Generate Report</button>
+
+    <script>
+        document.getElementById("generateReport").onclick = function() {
+            const { jsPDF } = window.jspdf;
+
+            const doc = new jsPDF();
+
+            // Sample Gemini response content
+            const geminiResponse = `
+                Response from Gemini:
+                Title: New Trends in AI
+                Summary: A deep dive into the latest advancements in artificial intelligence, including machine learning, natural language processing, and robotics.
+                Date: January 10, 2025
+                Author: John Doe
+            `;
+
+            // Add text to PDF
+            doc.text("Gemini Response Report", 10, 10);
+            doc.text(geminiResponse, 10, 20);
+
+            // Save the PDF
+            doc.save("Gemini_Report.pdf");
+        }
+    </script>
+</body>
+</html>
