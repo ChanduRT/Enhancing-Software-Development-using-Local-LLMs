@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to DEV IDE</title>
+  <style>
+    body {
+      background-color: #1e1e2e;
+      color: #cdd6f4;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .loader {
+      border: 6px solid #333;
+      border-top: 6px solid #89b4fa;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+
+  <!-- Auto redirect script -->
+  <script>
+    setTimeout(() => {
+      window.location.href = "/index"; // Redirect to IDE page after 4 seconds
+    }, 4000);
+  </script>
+</head>
+<body>
+  <h1>Welcome to DEV_ IDE</h1>
+  <p>Loading your development environment...</p>
+  <div class="loader"></div>
+</body>
+</html>
