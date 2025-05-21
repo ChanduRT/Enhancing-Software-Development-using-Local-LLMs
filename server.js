@@ -20,9 +20,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
+// Routes
 app.get('/', (req, res) => {
-  res.render('editor');
+  res.render('index');
 });
+app.get('/index', (req, res) => {
+  res.render('editor.ejs'); // IDE page
+});
+app.get('/voice', (req, res) => {
+  res.render('voice.ejs'); // Looks for 'views/voice.ejs'
+});
+
+
 
 // Language Mapping for Piston API
 const languageVersions = {
@@ -94,3 +103,23 @@ app.post('/crerep', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+app.post('/start-voice', async (req, res) => {
+  res.setHeader('Content-Type', 'text/plain');
+  res.setHeader('Transfer-Encoding', 'chunked');
+
+  const py = spawn('python3', ['voice_handler.py']);
+
+  py.stdout.on('data', (data) => {
+    res.write(data.toString());
+  });
+
+  py.stderr.on('data', (data) => {
+    console.error(`stderr: ${data}`);
+  });
+
+  py.on('close', () => {
+    res.end();
+  });
+});
+
+

@@ -1,47 +1,48 @@
-# Code Guardian - Online IDE with Security & Optimization
 
-Code Guardian is a web-based IDE designed to enhance software development by providing real-time vulnerability detection, code optimization, and clarity suggestions. It also allows users to generate reports in PDF format.
+---
 
-## Features
-- **Online IDE**: Write and edit code in a browser-based environment.
-- **Vulnerability Detection**: Check for security vulnerabilities in your code.
-- **Code Optimization**: Get suggestions to enhance performance and efficiency.
-- **Readability Improvements**: Ensure your code is clear and maintainable.
-- **Code Execution**: Uses Judge0 as the compiler.
-- **Report Generation**: Export reports as PDFs for documentation and analysis.
+# **DEV_IDE - Secure & AI-Powered Online IDE**  
+**DEV_IDE** is a web-based Integrated Development Environment (IDE) designed to **enhance software development** with real-time **vulnerability detection, AI-driven code optimization, and readability improvements**. It also enables users to **generate detailed reports in PDF format** for documentation and analysis.  
 
-## Technologies Used
-- **Backend**: Node.js
-- **Frontend Editor**: CodeMirror
-- **Compiler**: Judge0 API
-- **PDF Generation**: (Mention the library if applicable)
+## **Features**  
+✅ **Online IDE** – Write and edit code in a browser-based environment.  
+✅ **AI-Powered Analysis** – Uses **GenAI** to suggest optimizations and improve code quality.  
+✅ **Vulnerability Detection** – Identify security risks and weak points in your code.  
+✅ **Code Optimization** – Get AI-based recommendations for better performance.  
+✅ **Readability Enhancements** – Improve code clarity and maintainability.  
+✅ **Code Execution** – Powered by **Piston API** for seamless multi-language compilation.  
+✅ **PDF Report Generation** – Export security & performance insights as reports.  
 
-## Installation & Setup
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/your-username/your-repo.git
-   cd your-repo
-   ```
-2. Install dependencies:
-   ```sh
-   npm install
-   ```
-3. Start the application:
-   ```sh
-   npm run start
-   ```
+## **Technologies Used**  
+🖥️ **Backend**: Node.js  
+📝 **Frontend Editor**: CodeMirror  
+⚙️ **Compiler**: Piston API  
+🤖 **AI Optimization & Security Analysis**: GenAI  
+📄 **PDF Generation**: (Specify library, e.g., Puppeteer, jsPDF)  
 
-## Usage
-1. Open the web application in your browser.
-2. Write or paste your code in the editor.
-3. Run the code using the integrated Judge0 compiler.
-4. Check for security vulnerabilities and optimization suggestions.
-5. Generate and download a detailed PDF report.
+## **Installation & Setup**  
+### 1️⃣ Clone the Repository  
+```bash
+git clone https://github.com/your-username/your-repo.git
+cd your-repo
+```
+### 2️⃣ Install Dependencies  
+```bash
+npm install
+```
+### 3️⃣ Start the Application  
+```bash
+npm run start
+```
 
-## Contribution
-Feel free to fork the repository and submit pull requests with improvements.
+## **Usage**  
+1️⃣ Open the web application in your browser.  
+2️⃣ Write or paste your code into the editor.  
+3️⃣ Execute code using the integrated **Piston API** compiler.  
+4️⃣ Analyze security vulnerabilities and optimization suggestions using **GenAI**.  
+5️⃣ Generate and download a **detailed PDF report**.  
 
-
-
-
-
+## **Contributing**  
+🔹 Fork the repository.  
+🔹 Implement improvements.  
+🔹 Submit a pull request with your changes!  

@@ -2,7 +2,6 @@
 import flask
 from flask import request, jsonify
 import google.generativeai as genai
-import asyncio
 import concurrent.futures
 
 # Configure the Gemini API
@@ -65,76 +64,51 @@ with open("data.txt", "r") as file:
 app = flask.Flask(__name__)
 
 def analyze_code_vulnerabilities(code):
-    """Analyze the provided code for vulnerabilities using the Gemini model."""
-
     try:
         prompt = (
-            f"Analyze the following Python code for vulnerabilities. "
-            f"Just Provide a response on whivh code the code is vulnerable exactly and what it is vulnerable to  with line numbers"
-            f"and include suggestions for improvement if it's vulnerable. or give the secure code for this "
-            f"Here are some examples for reference:\n{vulnerability_examples}\n\n"
-            f"Code to analyze:\n{code}"
+            f"Analyze the following Python code for security vulnerabilities.\n\n"
+            f"--- Code ---\n{code}\n\n"
+            "### Instructions:\n"
+            "1. Provide a summary of vulnerabilities detected.\n"
+            "2. List findings in a table with these columns:\n"
+            "   - Vulnerability\n"
+            "   - Description\n"
+            "   - Severity (Critical/High/Medium/Low)\n"
+            "   - Line Number(s)\n"
+            "3. Explain root causes and remediation for each issue.\n"
+            "4. Provide enhanced or optimized secure code for each issue.\n\n"
+            "### Examples for reference:\n"
+            f"{vulnerability_examples}\n"
         )
-        print(prompt)
-        response = model_vulnerability_checker.generate_content(prompt, safety_settings={
-        'HARASSMENT': 'block_none',
-        'HATE_SPEECH': 'block_none',
-        'HARM_CATEGORY_HARASSMENT': 'block_none',
-        'HARM_CATEGORY_HATE_SPEECH': 'block_none',
-        'HARM_CATEGORY_SEXUALLY_EXPLICIT': 'block_none',
-        'HARM_CATEGORY_DANGEROUS_CONTENT': 'block_none',
-    })
-      
+
+        # Debug print (optional)
+        # print(prompt)
+
+        response = model_vulnerability_checker.generate_content(
+            prompt,
+            safety_settings={
+                'HARASSMENT': 'block_none',
+                'HATE_SPEECH': 'block_none',
+                'HARM_CATEGORY_HARASSMENT': 'block_none',
+                'HARM_CATEGORY_HATE_SPEECH': 'block_none',
+                'HARM_CATEGORY_SEXUALLY_EXPLICIT': 'block_none',
+                'HARM_CATEGORY_DANGEROUS_CONTENT': 'block_none',
+            }
+        )
+
         return response.text
+
     except Exception as e:
         return f"Error during vulnerability analysis: {e}"
-@app.route("/report", methods=["POST"])
-def generate_report():
-    """Generate a detailed report for the organization based on the code and its vulnerability analysis."""
-    user_code = request.json.get("code")
-    linting_comments = request.json.get("code_sum")
-
-    if not user_code or not linting_comments:
-        return jsonify({"error": "No code or analysis result provided"}), 400
-
-    try:
-        # Prepare the prompt for Gemini to generate the report
-        prompt = (
-            f"Create a detailed security report for the organization based on the following code analysis:\n\n"
-            f"Code:\n{user_code}\n\n"
-            f"Analysis (Vulnerabilities and suggestions):\n{linting_comments}\n\n"
-            "Provide a detailed report with the following sections:\n"
-            "1. Overview of the code and vulnerabilities.\n"
-            "2. Detailed vulnerability findings with line numbers.\n"
-            "3. Suggested improvements and secure code examples.\n"
-            "4. General security best practices.\n"
-        )
-        
-        # Call Gemini to generate the report
-        response = model_vulnerability_checker.generate_content(prompt, safety_settings={
-            'HARASSMENT': 'block_none',
-            'HATE_SPEECH': 'block_none',
-            'HARM_CATEGORY_HARASSMENT': 'block_none',
-            'HARM_CATEGORY_HATE_SPEECH': 'block_none',
-            'HARM_CATEGORY_SEXUALLY_EXPLICIT': 'block_none',
-            'HARM_CATEGORY_DANGEROUS_CONTENT': 'block_none',
-        })
-        
-        # Return the generated report
-        return jsonify({"report": response.text})
-    
-    except Exception as e:
-        return jsonify({"error": f"Error generating report: {e}"}), 500
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
     """API endpoint to analyze posted code."""
     user_code = request.json.get("code")
 
-    
     if not user_code:
         return jsonify({"error": "No code provided"}), 400
-    
+
     # Asynchronously process the code vulnerability analysis
     with concurrent.futures.ThreadPoolExecutor() as executor:
         future = executor.submit(analyze_code_vulnerabilities, user_code)
@@ -142,5 +116,73 @@ def analyze():
 
     return jsonify({"analysis_result": result})
 
+@app.route("/report", methods=["POST"])
+def generate_report():
+    """Generate a structured cybersecurity vulnerability report for the organization."""
+    user_code = request.json.get("code")
+    linting_comments = request.json.get("code_sum")
+
+    if not user_code or not linting_comments:
+        return jsonify({"error": "No code or analysis result provided"}), 400
+
+    try:
+        prompt = (
+            f"Generate a detailed structured cybersecurity vulnerability report "
+            f"based on the following code and vulnerability analysis:\n\n"
+            f"--- Source Code ---\n{user_code}\n\n"
+            f"--- Vulnerability Analysis ---\n{linting_comments}\n\n"
+            "### Instructions for Report Format:\n"
+            "1. Start with an **Executive Summary**:\n"
+            "- General security posture overview.\n"
+            "- Key issues found.\n\n"
+            "2. Provide a **Security Assessment Summary (Pass/Fail Table)**:\n\n"
+            "| Checkpoint                      | Status |\n"
+            "|--------------------------------|--------|\n"
+            "| Input Validation               | Pass/Fail |\n"
+            "| Authentication & Authorization| Pass/Fail |\n"
+            "| Sensitive Data Exposure        | Pass/Fail |\n"
+            "| SQL Injection                  | Pass/Fail |\n"
+            "| Cross-Site Scripting (XSS)     | Pass/Fail |\n"
+            "| Command Injection              | Pass/Fail |\n"
+            "| File Handling                  | Pass/Fail |\n"
+            "| Error Handling & Logging       | Pass/Fail |\n"
+            "| Secure Dependencies            | Pass/Fail |\n\n"
+            "3. Create a **Detailed Vulnerability Findings Table**:\n\n"
+            "| Vulnerability               | Description                                        | Severity | Line Number(s) |\n"
+            "|-----------------------------|----------------------------------------------------|----------|----------------|\n"
+            "| Example: SQL Injection      | Unsanitized input in query construction.           | High     | Line 15        |\n"
+            "| Example: Hardcoded Password | Static password used in authentication logic.     | Critical | Line 42        |\n\n"
+            "4. Add **Root Cause & Remediation Recommendations** for each issue:\n"
+            "- Vulnerability\n"
+            "- Root Cause\n"
+            "- Remediation Steps\n\n"
+            "5. Provide **Optimized and Enhanced Secure Code Examples** fixing the vulnerabilities:\n"
+            "- Before and After code snippets.\n"
+            "- Include explanations on improvements made.\n\n"
+            "6. Finish with **Security Best Practices & Recommendations**:\n"
+            "- Follow OWASP Top 10 guidelines.\n"
+            "- Implement Secure SDLC practices.\n"
+            "- Perform regular security assessments.\n"
+            "- Secure sensitive data and use encryption.\n"
+        )
+
+        response = model_vulnerability_checker.generate_content(
+            prompt,
+            safety_settings={
+                'HARASSMENT': 'block_none',
+                'HATE_SPEECH': 'block_none',
+                'HARM_CATEGORY_HARASSMENT': 'block_none',
+                'HARM_CATEGORY_HATE_SPEECH': 'block_none',
+                'HARM_CATEGORY_SEXUALLY_EXPLICIT': 'block_none',
+                'HARM_CATEGORY_DANGEROUS_CONTENT': 'block_none',
+            }
+        )
+
+        return jsonify({"report": response.text})
+
+    except Exception as e:
+        return jsonify({"error": f"Error generating report: {e}"}), 500
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
+

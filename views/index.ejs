@@ -4,49 +4,122 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome to DEV IDE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    /* Base reset and theming */
     body {
-      background-color: #1e1e2e;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
       color: #cdd6f4;
       font-family: 'Poppins', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
+      overflow: hidden;
       flex-direction: column;
     }
+
     h1 {
+      font-family: 'Orbitron', sans-serif;
       font-size: 3rem;
       margin-bottom: 1rem;
+      color: #89b4fa;
+      text-shadow: 0 0 10px #89b4fa, 0 0 20px #89b4fa;
+      letter-spacing: 2px;
+      animation: flicker 2s infinite alternate;
     }
+
     p {
       font-size: 1.2rem;
       margin-bottom: 2rem;
+      color: #f38ba8;
+      text-shadow: 0 0 5px #f38ba8;
+      opacity: 0.85;
     }
+
+    .loader-container {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(137, 180, 250, 0.4), 0 0 40px rgba(137, 180, 250, 0.2) inset;
+      padding: 20px;
+    }
+
     .loader {
-      border: 6px solid #333;
+      border: 6px solid rgba(51, 51, 51, 0.5);
       border-top: 6px solid #89b4fa;
       border-radius: 50%;
-      width: 60px;
-      height: 60px;
+      width: 80px;
+      height: 80px;
       animation: spin 1s linear infinite;
+      box-shadow: 0 0 10px #89b4fa;
     }
+
+    /* Background floating particles */
+    .particles {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .particle {
+      position: absolute;
+      background: #89b4fa;
+      border-radius: 50%;
+      opacity: 0.5;
+      animation: float 10s infinite ease-in-out;
+    }
+
+    .particle:nth-child(1) { width: 8px; height: 8px; top: 10%; left: 20%; animation-delay: 0s; }
+    .particle:nth-child(2) { width: 12px; height: 12px; top: 30%; left: 70%; animation-delay: 2s; }
+    .particle:nth-child(3) { width: 6px; height: 6px; top: 50%; left: 40%; animation-delay: 4s; }
+    .particle:nth-child(4) { width: 10px; height: 10px; top: 80%; left: 60%; animation-delay: 1s; }
+
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% { transform: rotate(0deg) }
+      100% { transform: rotate(360deg) }
+    }
+
+    @keyframes flicker {
+      0% { opacity: 1 }
+      100% { opacity: 0.85 }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) translateX(0) }
+      50% { transform: translateY(-20px) translateX(10px) }
+      100% { transform: translateY(0) translateX(0) }
     }
   </style>
 
-  <!-- Auto redirect script -->
   <script>
     setTimeout(() => {
-      window.location.href = "/index"; // Redirect to IDE page after 4 seconds
-    }, 4000);
+      window.location.href = "/index"
+    }, 4000)
   </script>
 </head>
 <body>
+  <div class="particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+
   <h1>Welcome to DEV_ IDE</h1>
   <p>Loading your development environment...</p>
-  <div class="loader"></div>
+  
+  <div class="loader-container">
+    <div class="loader"></div>
+  </div>
 </body>
 </html>

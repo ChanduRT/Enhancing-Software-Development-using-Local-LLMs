@@ -491,128 +491,283 @@
  <!DOCTYPE html>
  <html lang="en">
  <head>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>DEV IDE</title>
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/material-darker.min.css">
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js"></script>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/python/python.min.js"></script>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/clike/clike.min.js"></script>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-     <style>
-         body {
-             font-family: 'Poppins', sans-serif;
-             margin: 0;
-             padding: 0;
-             display: flex;
-             flex-direction: column;
-             height: 100vh;
-             align-items: center;
-             transition: background 0.3s, color 0.3s;
-         }
-         .editor-container {
-             width: 90%;
-             max-width: 1200px;
-             display: flex;
-             flex-direction: column;
-             gap: 10px;
-             border: 2px solid #444;
-             padding: 15px;
-             border-radius: 10px;
-         }
-         #editor {
-             flex: 1;
-             border-radius: 6px;
-             height: 400px;
-         }
-         #output-container {
-             border-radius: 8px;
-             padding: 10px;
-             font-family: "Courier New", monospace;
-             max-height: 200px;
-             overflow-y: auto;
-             white-space: pre-wrap;
-             font-size: 14px;
-             width: 100%;
-             text-align: left;
-             border: 2px solid #555;
-         }
-         .controls {
-             display: flex;
-             justify-content: center;
-             gap: 10px;
-         }
-         button {
-             padding: 12px 24px;
-             border: 2px solid #666;
-             border-radius: 8px;
-             cursor: pointer;
-             font-weight: bold;
-             transition: 0.3s;
-             background-color: #333;
-             color: #fff;
-         }
-         button:hover {
-             background-color: #555;
-             border-color: #777;
-         }
-         .theme-light {
-             background-color: #ffffff;
-             color: #000000;
-         }
-         .theme-dark {
-             background-color: #1e1e2e;
-             color: #cdd6f4;
-         }
-     </style>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <title>DEV IDE</title>
+ 
+   <!-- CodeMirror & jsPDF -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css" />
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/material-darker.min.css" />
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/python/python.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/clike/clike.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+ 
+   <!-- Fonts -->
+   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+ 
+   <style>
+     :root {
+       --neon-blue: #89b4fa;
+       --neon-pink: #f38ba8;
+       --dark-bg: #1e1e2e;
+       --light-bg: #f5f5f5;
+       --glass-light: rgba(255, 255, 255, 0.1);
+       --glass-dark: rgba(255, 255, 255, 0.05);
+     }
+ 
+     body {
+       font-family: 'Poppins', sans-serif;
+       margin: 0;
+       padding: 0;
+       height: 100vh;
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       background: var(--dark-bg);
+       color: #cdd6f4;
+       transition: background 0.4s ease, color 0.4s ease;
+     }
+ 
+     h1 {
+       font-family: 'Orbitron', sans-serif;
+       font-size: 2.5rem;
+       color: var(--neon-blue);
+       margin-top: 20px;
+       text-shadow: 0 0 10px var(--neon-blue);
+       transition: color 0.4s ease, text-shadow 0.4s ease;
+     }
+ 
+     .controls {
+       margin: 20px 0;
+       display: flex;
+       justify-content: space-between;
+       width: 90%;
+       max-width: 1200px;
+       flex-wrap: wrap;
+     }
+ 
+     .left-controls, .right-controls {
+       display: flex;
+       gap: 12px;
+       align-items: center;
+     }
+ 
+     /* Shared button and select styles */
+     button, select {
+       padding: 12px 20px;
+       border-radius: 8px;
+       border: 2px solid;
+       font-weight: bold;
+       cursor: pointer;
+       transition: all 0.3s ease;
+       backdrop-filter: blur(8px);
+     }
+ 
+     /* Select Styles */
+     select {
+       background: rgba(137, 180, 250, 0.1);
+       border-color: rgba(137, 180, 250, 0.5);
+       color: #cdd6f4;
+     }
+ 
+     select:hover {
+       background: rgba(137, 180, 250, 0.2);
+       box-shadow: 0 0 10px rgba(137, 180, 250, 0.4);
+     }
+ 
+     /* Individual button styles */
+     #run-button {
+       background: #22c55e;
+       border-color: #16a34a;
+       color: #ffffff;
+     }
+ 
+     #run-button:hover {
+       background: #16a34a;
+       box-shadow: 0 0 15px #22c55e;
+     }
+ 
+     #lint-button {
+       background: #facc15;
+       border-color: #eab308;
+       color: #1a1a1a;
+     }
+ 
+     #lint-button:hover {
+       background: #eab308;
+       box-shadow: 0 0 15px #facc15;
+     }
+ 
+     #cre-rep {
+       background: #ef4444;
+       border-color: #dc2626;
+       color: #ffffff;
+     }
+ 
+     #cre-rep:hover {
+       background: #dc2626;
+       box-shadow: 0 0 15px #ef4444;
+     }
+ 
+     /* Editor container */
+     .editor-container {
+       width: 90%;
+       max-width: 1200px;
+       display: flex;
+       flex-direction: column;
+       gap: 15px;
+       background: var(--glass-dark);
+       border-radius: 15px;
+       padding: 20px;
+       backdrop-filter: blur(10px);
+       box-shadow: 0 0 30px rgba(137, 180, 250, 0.2);
+       transition: background 0.4s ease;
+     }
+ 
+     .CodeMirror {
+       height: 400px;
+       border-radius: 8px;
+       font-size: 14px;
+       background: rgba(0, 0, 0, 0.4);
+       color: #f5f5f5;
+     }
+ 
+     #output-container {
+       background: rgba(0, 0, 0, 0.4);
+       color: #cdd6f4;
+       border-radius: 8px;
+       padding: 12px;
+       font-family: "Courier New", monospace;
+       max-height: 200px;
+       overflow-y: auto;
+       white-space: pre-wrap;
+       font-size: 14px;
+       box-shadow: inset 0 0 10px rgba(137, 180, 250, 0.1);
+       transition: background 0.4s ease, color 0.4s ease;
+     }
+ 
+     /* Light Theme Styles */
+     .theme-light {
+       background: var(--light-bg);
+       color: #1a1a1a;
+     }
+ 
+     .theme-light h1 {
+       color: #111;
+       text-shadow: none;
+     }
+ 
+     .theme-light .editor-container {
+       background: rgba(255, 255, 255, 0.6);
+       box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+     }
+ 
+     .theme-light select {
+       background: rgba(255, 255, 255, 0.6);
+       color: #1a1a1a;
+       border-color: #aaa;
+     }
+ 
+     .theme-light select:hover {
+       box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+     }
+ 
+     .theme-light #run-button {
+       background: #16a34a;
+       border-color: #15803d;
+       color: #fff;
+     }
+ 
+     .theme-light #lint-button {
+       background: #eab308;
+       border-color: #ca8a04;
+       color: #1a1a1a;
+     }
+ 
+     .theme-light #cre-rep {
+       background: #dc2626;
+       border-color: #b91c1c;
+       color: #fff;
+     }
+ 
+     .theme-light #output-container {
+       background: rgba(255, 255, 255, 0.5);
+       color: #111;
+     }
+ 
+     /* Neon glow animation for dark theme */
+     .neon-glow {
+       animation: neon-glow 1.5s infinite alternate;
+     }
+ 
+     @keyframes neon-glow {
+       0% { text-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue); }
+       100% { text-shadow: 0 0 15px var(--neon-pink), 0 0 25px var(--neon-pink); }
+     }
+   </style>
  </head>
+ 
  <body class="theme-dark">
-     <h1>DEV IDE</h1>
-     <div class="controls">
-         <select id="theme-selector">
-             <option value="dark">Dark Mode</option>
-             <option value="light">Light Mode</option>
-         </select>
-         <select id="language-selector">
-             <option value="javascript">JavaScript</option>
-             <option value="python">Python</option>
-             <option value="java">Java</option>
-             <option value="cpp">C++</option>
-             <option value="c">C</option>
-         </select>
-         <button id="run-button">Run Code</button>
-         <button id="lint-button">Check Code</button>
-         <button id="cre-rep">Create Report</button>
-     </div>
-     <div class="editor-container">
-         <textarea id="editor"></textarea>
-         <div id="output-container">Output will be displayed here...</div>
+   <h1 class="neon-glow">DEV IDE</h1>
+ 
+   <div class="controls">
+     <div class="left-controls">
+       <select id="theme-selector">
+         <option value="dark">Dark Mode</option>
+         <option value="light">Light Mode</option>
+       </select>
+ 
+       <select id="language-selector">
+         <option value="javascript">JavaScript</option>
+         <option value="python">Python 2</option>
+         <option value="java">Java</option>
+         <option value="cpp">C++</option>
+         <option value="c">C</option>
+       </select>
      </div>
  
-     <script>
-         const editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
-             mode: 'javascript',
-             lineNumbers: true,
-             theme: 'material-darker',
-         });
+     <div class="right-controls">
+       <button id="run-button">Run Code</button>
+       <button id="lint-button">Check Code</button>
+       <button id="cre-rep">Create Report</button>
+       <button onclick="window.location.href='/voice'" style="margin-top: 10px;">
+  🎙️ Voice to Code
+</button>
+   </div>
  
-         document.getElementById('language-selector').addEventListener('change', (event) => {
-             const languageModes = {
-                 javascript: 'javascript',
-                 python: 'python',
-                 java: 'text/x-java',
-                 cpp: 'text/x-c++src',
-                 c: 'text/x-csrc'
-             };
-             editor.setOption('mode', languageModes[event.target.value]);
-         });
+   <div class="editor-container">
+     <textarea id="editor"></textarea>
+     <div id="output-container">Output will be displayed here...</div>
+   </div>
  
-         document.getElementById('theme-selector').addEventListener('change', (event) => {
-             document.body.className = event.target.value === 'light' ? 'theme-light' : 'theme-dark';
-             editor.setOption('theme', event.target.value === 'light' ? 'default' : 'material-darker');
-         });
+   <script>
+     const editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+       mode: 'javascript',
+       lineNumbers: true,
+       theme: 'material-darker'
+     })
+ 
+     const themeSelector = document.getElementById('theme-selector')
+     const langSelector = document.getElementById('language-selector')
+     const body = document.body
+     const neonText = document.querySelector('h1')
+ 
+     themeSelector.addEventListener('change', event => {
+       const theme = event.target.value
+ 
+       if (theme === 'light') {
+         body.className = 'theme-light'
+         neonText.classList.remove('neon-glow')
+         editor.setOption('theme', 'default')
+       } else {
+         body.className = 'theme-dark'
+         neonText.classList.add('neon-glow')
+         editor.setOption('theme', 'material-darker')
+       }
+     })
+
  
          async function sendCodeToServer(endpoint) {
              const code = editor.getValue();
@@ -630,22 +785,114 @@
          }
  
          document.getElementById('run-button').addEventListener('click', async () => {
-             const result = await sendCodeToServer('/execute');
-             document.getElementById('output-container').innerText = result.output;
-         });
+            const button = document.getElementById('run-button');
+            
+            console.log("Running code... Please wait ⏳");
+            button.textContent = "Processing...";
+            button.disabled = true;
+        
+            try {
+                const result = await sendCodeToServer('/execute');
+                document.getElementById('output-container').innerText = result.output;
+            } catch (error) {
+                console.error("Error running code:", error);
+                alert("An error occurred while running the code.");
+            } finally {
+                button.textContent = "Run Code";
+                button.disabled = false;
+            }
+        });
+        
  
          document.getElementById('cre-rep').addEventListener('click', async () => {
-             const result = await sendCodeToServer('/crerep');
-             const { jsPDF } = window.jspdf;
-             const doc = new jsPDF();
-             doc.text(result.output || 'No report available', 10, 10);
-             doc.save('generated-report.pdf');
-         });
+            console.log("Processing... Please wait ⏳");
+        
+            const button = document.getElementById('cre-rep');
+            button.textContent = "Processing...";
+            button.disabled = true;
+        
+            try {
+                // Send request and check response
+                const result = await sendCodeToServer('/crerep');
+        
+                if (!result || !result.output) {
+                    console.error("Error: No output received from the server.");
+                    alert("Failed to generate report. No data received.");
+                    return;
+                }
+        
+                console.log("Generating PDF...");
+        
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+        
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+                const margin = 10;
+                const lineHeight = 10;
+                const maxWidth = pageWidth - 2 * margin;
+                const splitText = doc.splitTextToSize(result.output, maxWidth);
+        
+                let y = margin + 10;
+                let pageNumber = 1;
+        
+                function addPageFooter() {
+                    doc.setFontSize(10);
+                    doc.text(`Page ${pageNumber}`, pageWidth / 2, pageHeight - margin, { align: 'center' });
+                    doc.rect(margin, margin, pageWidth - 2 * margin, pageHeight - 2 * margin);
+                    pageNumber++;
+                }
+        
+                doc.setFont('times', 'bold');
+                doc.setFontSize(16);
+                doc.text('Generated Report', pageWidth / 2, margin + 5, { align: 'center' });
+        
+                doc.setFont('times', 'normal');
+                doc.setFontSize(12);
+        
+                splitText.forEach((line) => {
+                    if (y + lineHeight > pageHeight - margin - 10) {
+                        addPageFooter();
+                        doc.addPage();
+                        y = margin + 10;
+                    }
+                    doc.text(line, margin + 5, y);
+                    y += lineHeight;
+                });
+        
+                addPageFooter();
+                doc.save('generated-report.pdf');
+                console.log("PDF Generated Successfully ✅");
+        
+            } catch (error) {
+                console.error("Error generating report:", error);
+                alert("An error occurred while generating the report.");
+            } finally {
+                button.textContent = "Create Report";
+                button.disabled = false;
+            }
+        });
+        
  
-         document.getElementById('lint-button').addEventListener('click', async () => {
-             const result = await sendCodeToServer('/checklint');
-             document.getElementById('output-container').innerText = result.comments || 'No issues found!';
-         });
+        document.getElementById('lint-button').addEventListener('click', async () => {
+            const button = document.getElementById('lint-button');
+            
+            console.log("Checking code... Please wait ⏳");
+            button.textContent = "Processing...";
+            button.disabled = true;
+        
+            try {
+                const result = await sendCodeToServer('/checklint');
+                document.getElementById('output-container').innerText = result.comments || 'No issues found!';
+            } catch (error) {
+                console.error("Error checking code:", error);
+                alert("An error occurred while checking the code.");
+            } finally {
+                button.textContent = "Check Code";
+                button.disabled = false;
+            }
+        });
+        
      </script>
  </body>
  </html>
