@@ -1,7 +1,7 @@
 
 💻 Dev_IDE: Secure, AI-Powered Browser-Based IDE
 Dev_IDE is an advanced, browser-based Integrated Development Environment designed to maximize developer productivity, empower secure coding, and deliver AI-assisted support—all with privacy and offline-first principles.
-![image](https://github.com/user-attachments/assets/d074fa54-7b4e-4772-ab1d-6f2f0f09f2b4)
+![image](https://github.com/user-attachments/assets/5704fedb-7f99-48be-82fc-2df1c37ed71a)
 
 🚀 Key Concepts & Features
 🧠 AI-Assisted Coding (Local LLMs)
@@ -22,7 +22,7 @@ Multi-Language Compilation: Live code execution is available in over 40 language
 
 📄 Professional Reporting & Documentation
 PDF Report Generation: Export AI-reviewed code, security findings, and optimization advice in clean, paginated PDF reports. All exports use Node.js streams for fast, reliable delivery and metadata timestamping.
-![image](https://github.com/user-attachments/assets/5704fedb-7f99-48be-82fc-2df1c37ed71a)
+![image](https://github.com/user-attachments/assets/d074fa54-7b4e-4772-ab1d-6f2f0f09f2b4)
 
 Organized Feedback: Reports include code snapshots, vulnerability overviews, performance tips, and language metadata for traceability.
 
